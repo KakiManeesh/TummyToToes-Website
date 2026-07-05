@@ -14,6 +14,7 @@ import {
 } from "@/sanity/queries";
 import type { GalleryPanelData } from "@/components/Gallery";
 import type { PackageData } from "@/components/Packages";
+import { cloudinaryOriginalUrl } from "@/lib/cloudinary";
 
 // ISR: revalidate every 60 seconds as a baseline; the webhook will revalidate instantly on publish
 export const revalidate = 60;
@@ -28,7 +29,7 @@ export default async function IndexPage() {
 
   // Map Sanity hero slides to plain URL strings for the carousel
   const heroImages: string[] = (heroSlides as Array<{ image?: { secure_url?: string } }>)
-    .map((s) => s.image?.secure_url ?? "")
+    .map((s) => cloudinaryOriginalUrl(s.image?.secure_url ?? ""))
     .filter(Boolean);
 
   // Map Sanity gallery panels to the shape Gallery expects
@@ -43,7 +44,7 @@ export default async function IndexPage() {
     }>
   ).map((p) => ({
     _id: p._id,
-    src: p.coverImage?.secure_url ?? "",
+    src: cloudinaryOriginalUrl(p.coverImage?.secure_url ?? ""),
     title: p.title,
     description: p.description,
     alt: `${p.title} photography by Tummy To Toes`,

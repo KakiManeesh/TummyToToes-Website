@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { client } from "@/sanity/client";
 import { GALLERY_CATEGORY_QUERY } from "@/sanity/queries";
+import { cloudinaryOriginalUrl } from "@/lib/cloudinary";
 
 export const revalidate = 60;
 
@@ -31,7 +32,12 @@ export async function GET(request: NextRequest) {
       { next: { revalidate: 60, tags: ["galleryCategory"] } },
     );
 
-    return NextResponse.json({ images: data?.images ?? [] });
+    const images = (data?.images ?? []).map((image) => ({
+      ...image,
+      secure_url: cloudinaryOriginalUrl(image.secure_url),
+    }));
+
+    return NextResponse.json({ images });
   } catch (err) {
     console.error("Gallery API fatal error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
