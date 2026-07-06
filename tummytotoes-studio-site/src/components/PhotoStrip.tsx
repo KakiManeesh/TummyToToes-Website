@@ -33,8 +33,10 @@ export default function PhotoStrip() {
               key={`${photo.src}-${index}`}
               src={photo.src}
               alt={photo.alt}
-              width={400}
-              height={300}
+              width={800}
+              height={600}
+              quality={100}
+              sizes="(max-width: 768px) 50vw, 400px"
               className="h-[220px] md:h-[300px] w-auto shrink-0 object-cover"
             />
           ))}

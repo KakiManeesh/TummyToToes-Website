@@ -140,6 +140,7 @@ const Gallery = ({ panels: panelsProp }: GalleryProps) => {
                   alt={panel.alt}
                   fill
                   sizes="100vw"
+                  quality={100}
                   loading={index === 0 ? "eager" : "lazy"}
                   className="object-cover"
                   style={{ objectPosition: panel.objectPosition ?? 'center center' }}
@@ -149,12 +150,12 @@ const Gallery = ({ panels: panelsProp }: GalleryProps) => {
               <div className="absolute inset-0 p-5 sm:p-6 text-white pointer-events-none">
                 <div className="absolute left-5 right-5 bottom-5 sm:left-6 sm:right-6 flex items-end justify-between gap-4">
                   <div className="max-w-[75%]">
-                  <h3 className="font-heading text-3xl sm:text-4xl font-light leading-none text-white">
-                    {panel.title}
-                  </h3>
-                  <p className="font-body text-sm leading-relaxed text-white/75 mt-3 max-w-md">
-                    {panel.description}
-                  </p>
+                    <h3 className="font-heading text-3xl sm:text-4xl font-light leading-none text-white">
+                      {panel.title}
+                    </h3>
+                    <p className="font-body text-sm leading-relaxed text-white/75 mt-3 max-w-md">
+                      {panel.description}
+                    </p>
                   </div>
                   <Link
                     href={`/gallery?category=${panel.category}`}
@@ -214,6 +215,7 @@ const Gallery = ({ panels: panelsProp }: GalleryProps) => {
                       alt={panel.alt}
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
+                      quality={100}
                       loading={index === 0 ? "eager" : "lazy"}
                       className="object-cover"
                       style={{ objectPosition: panel.objectPosition ?? 'center center' }}

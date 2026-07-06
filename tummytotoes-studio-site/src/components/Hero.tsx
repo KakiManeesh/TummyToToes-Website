@@ -120,6 +120,7 @@ const Hero = ({ images = [] }: HeroProps) => {
                   alt={slide.alt ?? "TummyToToes Studio portfolio photograph from Hyderabad"}
                   fill
                   sizes="(max-width: 768px) 100vw, 480px"
+                  quality={90}
                   className="object-cover object-center rounded-2xl pointer-events-none"
                   priority={index === 0}
                   {...(index > 0 ? { loading: "lazy" as const } : {})}

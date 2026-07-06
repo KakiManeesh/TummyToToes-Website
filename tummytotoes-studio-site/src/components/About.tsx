@@ -30,6 +30,7 @@ const About = () => {
             alt="Photographer portrait"
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
+            quality={100}
             loading="lazy"
             className="object-cover"
           />

@@ -290,6 +290,7 @@ const GalleryContent = ({ initialCategory }: { initialCategory?: Category }) => 
                         alt={`${displayed} portrait by TummyToToes Studio in Hyderabad`}
                         fill
                         sizes="(max-width: 640px) 100vw, 33vw"
+                        quality={90}
                         priority={isPriority}
                         loading={isFirstBatch && isPriority ? "eager" : "lazy"}
                         className="object-cover transition-transform duration-500 [@media(hover:hover)]:group-hover:scale-[1.02]"
@@ -381,8 +382,9 @@ const GalleryContent = ({ initialCategory }: { initialCategory?: Category }) => 
               width={images[lightbox].width}
               height={images[lightbox].height}
               className="pointer-events-auto max-h-[85vh] max-w-[92vw] w-auto h-auto object-contain rounded-sm"
-              sizes="92vw"
-              loading="lazy"
+              sizes="100vw"
+              quality={100}
+              loading="eager"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
