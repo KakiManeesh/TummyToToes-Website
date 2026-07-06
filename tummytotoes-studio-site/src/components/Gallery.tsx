@@ -142,6 +142,7 @@ const Gallery = ({ panels: panelsProp }: GalleryProps) => {
                   sizes="100vw"
                   quality={100}
                   loading={index === 0 ? "eager" : "lazy"}
+                  unoptimized
                   className="object-cover"
                   style={{ objectPosition: panel.objectPosition ?? 'center center' }}
                 />
@@ -217,6 +218,7 @@ const Gallery = ({ panels: panelsProp }: GalleryProps) => {
                       sizes="(max-width: 768px) 100vw, 50vw"
                       quality={100}
                       loading={index === 0 ? "eager" : "lazy"}
+                      unoptimized
                       className="object-cover"
                       style={{ objectPosition: panel.objectPosition ?? 'center center' }}
                     />

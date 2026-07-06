@@ -32,6 +32,7 @@ const About = () => {
             sizes="(max-width: 768px) 100vw, 50vw"
             quality={100}
             loading="lazy"
+            unoptimized
             className="object-cover"
           />
         </div>

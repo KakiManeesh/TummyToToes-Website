@@ -293,6 +293,7 @@ const GalleryContent = ({ initialCategory }: { initialCategory?: Category }) => 
                         quality={90}
                         priority={isPriority}
                         loading={isFirstBatch && isPriority ? "eager" : "lazy"}
+                        unoptimized
                         className="object-cover transition-transform duration-500 [@media(hover:hover)]:group-hover:scale-[1.02]"
                       />
                       <div className="absolute inset-0 bg-background/30 opacity-0 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -385,6 +386,7 @@ const GalleryContent = ({ initialCategory }: { initialCategory?: Category }) => 
               sizes="100vw"
               quality={100}
               loading="eager"
+              unoptimized
               onClick={(e) => e.stopPropagation()}
             />
           </div>

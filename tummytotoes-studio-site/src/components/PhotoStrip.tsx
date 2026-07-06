@@ -37,6 +37,7 @@ export default function PhotoStrip() {
               height={600}
               quality={100}
               sizes="(max-width: 768px) 50vw, 400px"
+              unoptimized
               className="h-[220px] md:h-[300px] w-auto shrink-0 object-cover"
             />
           ))}
