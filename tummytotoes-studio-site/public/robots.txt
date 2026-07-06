@@ -1,5 +1,5 @@
 # TummyToToes Studio – robots.txt
-# Production: https://www.tummytotoes.com
+# Production: https://www.tummytotoesphotography.com
 # Generated for SEO + GEO/AEO crawler allow-listing.
 
 # ─── Global default ──────────────────────────────────────────────────────────
@@ -101,7 +101,4 @@ User-agent: YouBot
 Allow: /
 
 # ─── Sitemap ────────────────────────────────────────────────────────────────
-Sitemap: https://www.tummytotoes.com/sitemap.xml
-
-# ─── Host ───────────────────────────────────────────────────────────────────
-Host: https://www.tummytotoes.com
+Sitemap: https://www.tummytotoesphotography.com/sitemap.xml
