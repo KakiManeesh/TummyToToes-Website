@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-  "https://www.tummytotoes.com";
+  "https://www.tummytotoesphotography.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
