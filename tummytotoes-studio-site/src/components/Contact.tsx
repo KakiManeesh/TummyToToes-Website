@@ -1,11 +1,14 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react"; import { Phone, Mail, MapPin } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Phone, Mail, MapPin } from "lucide-react";
 
 const Contact = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [statusMessage, setStatusMessage] = useState("");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -27,10 +30,15 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus("idle");
+    setStatusMessage("");
 
     try {
-      const response = await fetch(import.meta.env.VITE_GOOGLE_SCRIPT_URL, {
+      const response = await fetch("/api/contact", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           name: form.name,
           email: form.email,
@@ -43,15 +51,24 @@ const Contact = () => {
 
       const data = await response.json();
 
-      if (data.result === "success") {
-        alert("Thank you for your enquiry! We'll be in touch shortly.");
+      if (response.ok && data.success) {
+        setSubmitStatus("success");
+        setStatusMessage("Thank you for your enquiry! We'll be in touch shortly.");
         setForm({ name: "", email: "", phone: "", sessionType: "", date: "", message: "" });
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setSubmitStatus("idle");
+          setStatusMessage("");
+        }, 5000);
       } else {
-        alert("There was an error submitting your enquiry. Please try again or contact us directly.");
+        setSubmitStatus("error");
+        setStatusMessage(data.error || "There was an error submitting your enquiry. Please try again or contact us directly.");
       }
     } catch (error) {
       console.error("Form submission error:", error);
-      alert("Failed to send enquiry. Please try contacting us via WhatsApp or email.");
+      setSubmitStatus("error");
+      setStatusMessage("Failed to send enquiry. Please try contacting us via WhatsApp or email.");
     } finally {
       setIsSubmitting(false);
     }
@@ -78,27 +95,34 @@ const Contact = () => {
               Contact
             </span>
           </div>
+
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-light text-foreground">
             Let&apos;s create something beautiful
           </h2>
+
           <p className="font-body text-base text-muted-foreground">
             Ready to book your session or have a question? Reach out and let&apos;s start planning
             your perfect shoot.
           </p>
+
           <div className="flex flex-col gap-4 mt-2 md:mt-4">
             <a href="tel:+919966531312" className="flex items-center gap-3 min-h-[44px]">
               <Phone className="h-4 w-4 text-accent flex-shrink-0" />
               <span className="font-body text-sm text-muted-foreground">+91 99665 31312</span>
             </a>
+
             <a href="mailto:tummytotoes@gmail.com" className="flex items-center gap-3 min-h-[44px]">
               <Mail className="h-4 w-4 text-accent flex-shrink-0" />
               <span className="font-body text-sm text-muted-foreground">tummytotoes@gmail.com</span>
             </a>
+
             <div className="flex items-center gap-3">
               <MapPin className="h-4 w-4 text-accent flex-shrink-0" />
               <span className="font-body text-sm text-muted-foreground">Kukatpally, Hyderabad, India</span>
             </div>
+
           </div>
+
           {/* Social buttons — full-width on mobile */}
           <div className="flex flex-col sm:flex-row gap-3 mt-2 md:mt-4">
             <a
@@ -130,6 +154,7 @@ const Contact = () => {
             </a>
           </div>
         </div>
+
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 md:gap-5">
@@ -167,6 +192,7 @@ const Contact = () => {
             <option value="newborn">Newborn</option>
             <option value="event">Event</option>
           </select>
+
           <input
             type="date"
             placeholder="Preferred Date"
@@ -188,12 +214,29 @@ const Contact = () => {
           >
             {isSubmitting ? "Sending..." : "Send Enquiry"}
           </button>
+
+          {/* Status Messages */}
+          {submitStatus === "success" && (
+            <div className="p-3 bg-green-50 border border-green-200 rounded-sm text-green-700 text-sm text-center font-body">
+              {statusMessage}
+            </div>
+          )}
+          
+          {submitStatus === "error" && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-sm text-red-700 text-sm text-center font-body">
+              {statusMessage}
+            </div>
+          )}
+
           <p className="text-center text-xs text-muted-foreground/60 font-body mt-1">
-            Have a quick question? WhatsApp is the fastest way to reach us 💚
+            Have a quick question? WhatsApp is the fastest way to reach us
           </p>
+
         </form>
       </div>
+
     </section>
+
   );
 };
 

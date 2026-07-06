@@ -5,36 +5,55 @@ import Image from "next/image";
 
 const SWIPE_THRESHOLD = 50;
 
-interface HeroProps {
-  /** Cloudinary secure_url strings for the carousel, passed from the server component */
-  images?: string[];
+interface HeroSlide {
+  /** Cloudinary secure_url for the slide image */
+  url: string;
+  /** Descriptive alt text for SEO / GEO / AEO */
+  alt?: string;
 }
 
+interface HeroProps {
+  /** Hero carousel slides, passed from the server component */
+  images?: Array<string | HeroSlide>;
+}
+
+const isSlideObject = (
+  value: string | HeroSlide,
+): value is HeroSlide => typeof value === "object" && value !== null && "url" in value;
+
 const Hero = ({ images = [] }: HeroProps) => {
+  // Normalize to the object form so per-image alt can be supplied by the server.
+  const slides: HeroSlide[] = images
+    .map((value) =>
+      isSlideObject(value) ? value : { url: value, alt: undefined },
+    )
+    .filter((slide) => slide.url);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const touchStartX = useRef<number | null>(null);
   const mouseStartX = useRef<number | null>(null);
 
   const startAutoCycle = useCallback(() => {
-    if (images.length === 0) return;
+    if (slides.length === 0) return;
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
     }, 3000);
-  }, [images.length]);
+  }, [slides.length]);
 
   const goToNext = useCallback(() => {
-    if (images.length === 0) return;
-    setCurrentIndex((prev) => (prev + 1) % images.length);
+    if (slides.length === 0) return;
+    setCurrentIndex((prev) => (prev + 1) % slides.length);
     startAutoCycle();
-  }, [images.length, startAutoCycle]);
+  }, [slides.length, startAutoCycle]);
 
   const goToPrevious = useCallback(() => {
-    if (images.length === 0) return;
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    if (slides.length === 0) return;
+
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
     startAutoCycle();
-  }, [images.length, startAutoCycle]);
+  }, [slides.length, startAutoCycle]);
 
   const handleSwipeEnd = useCallback(
     (startX: number, endX: number) => {
@@ -59,12 +78,12 @@ const Hero = ({ images = [] }: HeroProps) => {
   );
 
   useEffect(() => {
-    if (images.length === 0) return;
+    if (slides.length === 0) return;
     startAutoCycle();
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [images, startAutoCycle]);
+  }, [slides, startAutoCycle]);
 
   return (
     <section id="home" className="relative overflow-hidden flex items-start md:items-center md:min-h-screen">
@@ -88,17 +107,17 @@ const Hero = ({ images = [] }: HeroProps) => {
             onMouseUp={handleMouseEnd}
             onMouseLeave={handleMouseEnd}
           >
-            {images.length === 0 ? (
+            {slides.length === 0 ? (
               <div
                 className="absolute inset-0 rounded-2xl bg-muted animate-pulse"
                 aria-label="Loading hero images"
               />
             ) : (
-              images.map((src, index) => (
+              slides.map((slide, index) => (
                 <Image
-                  key={src}
-                  src={src}
-                  alt="Portfolio photography by Tummy To Toes"
+                  key={slide.url}
+                  src={slide.url}
+                  alt={slide.alt ?? "TummyToToes Studio portfolio photograph from Hyderabad"}
                   fill
                   sizes="(max-width: 768px) 100vw, 480px"
                   className="object-cover object-center rounded-2xl pointer-events-none"

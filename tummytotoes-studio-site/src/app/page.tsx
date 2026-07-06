@@ -15,9 +15,38 @@ import {
 import type { GalleryPanelData } from "@/components/Gallery";
 import type { PackageData } from "@/components/Packages";
 import { cloudinaryOriginalUrl } from "@/lib/cloudinary";
+import type { Metadata } from "next";
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
+  "https://www.tummytotoes.com";
 
 // ISR: revalidate every 60 seconds as a baseline; the webhook will revalidate instantly on publish
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title:
+    "Newborn & Maternity Photographer in Hyderabad | TummyToToes Studio",
+  description:
+    "TummyToToes Studio captures newborn, maternity, kids, events, fashion and wedding moments in Hyderabad. Slow, intentional, emotionally honest photography by Surya Kiran.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title:
+      "Newborn & Maternity Photographer in Hyderabad | TummyToToes Studio",
+    description:
+      "TummyToToes Studio captures newborn, maternity, kids, events, fashion and wedding moments in Hyderabad.",
+    url: SITE_URL,
+    type: "website",
+  },
+  twitter: {
+    title:
+      "Newborn & Maternity Photographer in Hyderabad | TummyToToes Studio",
+    description:
+      "TummyToToes Studio captures newborn, maternity, kids, events, fashion and wedding moments in Hyderabad.",
+  },
+};
 
 export default async function IndexPage() {
   // Fetch all content from Sanity in parallel
@@ -27,12 +56,27 @@ export default async function IndexPage() {
     client.fetch(GALLERY_PANELS_QUERY, {}, { next: { revalidate: 60, tags: ["galleryPanel"] } }).catch(() => []),
   ]);
 
-  // Map Sanity hero slides to plain URL strings for the carousel
-  const heroImages: string[] = (heroSlides as Array<{ image?: { secure_url?: string } }>)
-    .map((s) => cloudinaryOriginalUrl(s.image?.secure_url ?? ""))
-    .filter(Boolean);
+  // Map Sanity hero slides to the shape Hero expects — preserving alt text
+  // for SEO / GEO per-image optimisation.
+  const heroImages: Array<{ url: string; alt: string }> = (
+    heroSlides as Array<{
+      alt?: string;
+      image?: { secure_url?: string };
+      category?: string;
+    }>
+  )
+    .map((s) => {
+      const url = cloudinaryOriginalUrl(s.image?.secure_url ?? "");
+      if (!url) return null;
+      const alt =
+        s.alt?.trim() ||
+        "TummyToToes Studio portfolio photograph from Hyderabad";
+      return { url, alt };
+    })
+    .filter((v): v is { url: string; alt: string } => v !== null);
 
-  // Map Sanity gallery panels to the shape Gallery expects
+  // Map Sanity gallery panels to the shape Gallery expects.
+  // Alt text is generated from the panel title + studio name for better image SEO.
   const galleryPanelsMapped: GalleryPanelData[] = (
     galleryPanels as Array<{
       _id: string;
@@ -47,7 +91,7 @@ export default async function IndexPage() {
     src: cloudinaryOriginalUrl(p.coverImage?.secure_url ?? ""),
     title: p.title,
     description: p.description,
-    alt: `${p.title} photography by Tummy To Toes`,
+    alt: `${p.title} portrait — ${p.category} photography by TummyToToes Studio, Hyderabad`,
     category: p.category,
     objectPosition: p.objectPosition,
   })).filter((p) => p.src);
