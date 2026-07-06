@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import GalleryPageClient, {
-  categories,
-  CATEGORY_META,
-  type Category,
-} from "./GalleryClient";
+import GalleryPageClient from "./GalleryClient";
+import { categories, CATEGORY_META, type Category } from "./gallery-data";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
